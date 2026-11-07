@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resum tècnic · CiberEdu</title>
+<meta name="description" content="Com funciona el sistema de sensors de CiberEdu, les connexions de la placa i com connectar un sensor al WiFi de l'escola.">
+<link rel="stylesheet" href="/estil.css">
+<link rel="stylesheet" href="/recursos/document.css">
+</head>
+<body>
+<header class="cap"><div class="cap-dins">
+  <a class="marca" href="/">CiberEdu · <span>De la dada al núvol</span></a>
+  <nav aria-label="Menú">
+    <a href="/">Dades</a>
+    <a href="/projecte/">El projecte</a>
+    <a href="/flux/">Com funciona</a>
+    <a href="/recursos/" aria-current="page">Recursos</a>
+  </nav>
+</div></header>
+
+<main><article class="doc">
+  <p class="etiqueta">Resum tècnic</p>
+  <h1>De la dada al núvol</h1>
+  <p class="data">CiberEdu · actualitzat el 6 de novembre de 2026</p>
+  <p class="descarrega"><a class="boto-gran" href="/recursos/resum-tecnic.pdf">Descarregar en PDF</a></p>
+
+  <p>Sensors de qualitat de l'aire (partícules PM1, PM2.5 i PM10) a les escoles, connectats a una xarxa comuna.
+     Cada sensor envia una lectura cada 30 segons i tothom les pot veure a <a href="https://ciberedu2020-cloud.github.io">ciberedu2020-cloud.github.io</a>.</p>
+
+  <h2>El recorregut d'una dada</h2>
+  <figure class="esquema">
+    <svg viewBox="0 0 760 170" role="img" aria-label="La dada surt de l'escola i arriba a la pàgina pública" font-family="system-ui, sans-serif" font-size="13">
+      <defs><marker id="fletxa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8b93a3"/></marker></defs>
+      <g fill="none" stroke="#8b93a3" stroke-width="1.25">
+        <path d="M180 76H204" marker-end="url(#fletxa)"/><path d="M360 76H384" marker-end="url(#fletxa)"/><path d="M540 76H564" marker-end="url(#fletxa)"/>
+      </g>
+      <g fill="none" stroke="#8b93a3" stroke-width="1.25">
+        <rect x="24" y="40" width="156" height="72" rx="8"/><rect x="204" y="40" width="156" height="72" rx="8"/><rect x="384" y="40" width="156" height="72" rx="8"/>
+      </g>
+      <rect x="564" y="40" width="156" height="72" rx="8" fill="#2f6fde" fill-opacity="0.12" stroke="#2f6fde" stroke-width="2"/>
+      <g text-anchor="middle" fill="var(--text)" font-weight="600">
+        <text x="102" y="68">1. Sensor</text><text x="282" y="68">2. Broker flespi</text><text x="462" y="68">3. Raspberry Pi</text><text x="642" y="68">4. Pàgina pública</text>
+      </g>
+      <g text-anchor="middle" fill="var(--suau)" font-size="11.5">
+        <text x="102" y="88">a l'aula, cada 30 s</text><text x="282" y="88">al núvol, MQTT xifrat</text><text x="462" y="88">InfluxDB, 2 anys</text><text x="642" y="88">GitHub, cada 10 min</text>
+      </g>
+      <text x="24" y="150" font-size="11.5" fill="var(--suau)">Totes les connexions surten cap enfora: ni l'escola ni la Raspberry obren cap port a internet.</text>
+    </svg>
+  </figure>
+  <table>
+    <tr><th>Peça</th><th>Què fa</th><th>Tecnologia</th></tr>
+    <tr><td>Sensor</td><td>Mesura les partícules i envia la lectura per WiFi</td><td>ESP8266 + sensor làser ZH03B</td></tr>
+    <tr><td>Broker</td><td>Rep els missatges de tots els sensors i els reparteix</td><td>flespi (MQTT amb TLS, pla gratuït fins a 50 sensors)</td></tr>
+    <tr><td>Base de dades</td><td>Guarda cada lectura amb la data i l'hora durant 2 anys</td><td>Raspberry Pi 5: Telegraf + InfluxDB</td></tr>
+    <tr><td>Pàgina pública</td><td>Mostra l'última lectura i l'evolució de cada escola</td><td>Pàgina estàtica a GitHub Pages, regenerada cada 10 minuts</td></tr>
+  </table>
+  <p>Internament, el projecte fa servir també un tauler de Grafana per vigilar els sensors en temps real; no és públic.</p>
+
+  <h2>El sensor</h2>
+  <p>Cada caixa porta una placa ESP8266 (NodeMCU), un sensor làser de partícules ZH03B, una pantalla LCD de 16×2 i un semàfor de tres llums.
+     Totes les plaques porten el mateix programa i cadascuna s'identifica sola amb el codi del seu xip (per exemple <code>b2170b</code>),
+     que surt a la pantalla en arrencar.</p>
+  <table>
+    <tr><th>Element</th><th>Connexió a la placa</th></tr>
+    <tr><td>Sensor ZH03B: dades (fil groc)</td><td>D7 (o RX en capses antigues)</td></tr>
+    <tr><td>Sensor ZH03B: ordres (fil verd)</td><td>D8 (o TX en capses antigues)</td></tr>
+    <tr><td>Sensor ZH03B: alimentació</td><td>5 V i GND</td></tr>
+    <tr><td>Pantalla LCD (I2C)</td><td>D1 i D2</td></tr>
+    <tr><td>Semàfor: vermell, groc, verd</td><td>D5, D4, D3</td></tr>
+  </table>
+  <p>Hi ha <strong>dos muntatges del sensor</strong>, i el programa prova tots dos i es queda amb el que respon:</p>
+  <ul>
+    <li><strong>D7 i D8</strong> (capses revisades el 2026): són els pins alternatius del port sèrie, així el sensor no comparteix fil
+        amb el cable USB i es pot llegir fins i tot amb la placa connectada a l'ordinador.</li>
+    <li><strong>RX i TX</strong> (el muntatge original dels tallers del 2022): el programa també hi prova de llegir el sensor, però aquest
+        muntatge encara no s'ha comprovat en cap capsa. Si en trobeu una així, el més segur és passar el fil groc a D7 i el verd a D8.</li>
+  </ul>
+  <p><strong>Què envia.</strong> Cada 30 segons, un missatge com <code>{"id":"b2170b","pm1":8,"pm25":11,"pm10":12}</code> al topic <code>ciberedu/b2170b</code>, en µg/m³.</p>
+  <p><strong>El semàfor</strong> es fixa en el PM2.5:</p>
+  <table>
+    <tr><th>Color</th><th>PM2.5 (µg/m³)</th><th>Què vol dir</th></tr>
+    <tr><td>Verd</td><td>0–15</td><td>Aire bo</td></tr>
+    <tr><td>Groc</td><td>16–35</td><td>Moderat</td></tr>
+    <tr><td>Vermell</td><td>més de 35</td><td>Dolent</td></tr>
+  </table>
+
+  <h2 class="salt">Connectar un sensor a l'escola</h2>
+  <p>La primera vegada, o quan no troba cap WiFi conegut, el sensor obre durant 10 minuts una xarxa pròpia anomenada <strong>CIBEREDU-Sensor</strong>.</p>
+  <ol>
+    <li>Endolla el sensor. La pantalla posa «Mobil: WiFi CIBEREDU-Sensor».</li>
+    <li>Amb el mòbil, connecta't a la xarxa <strong>CIBEREDU-Sensor</strong> (no té contrasenya).</li>
+    <li>S'obre una pàgina amb el botó <strong>Configure WiFi</strong>. Si no s'obre, escriu <code>192.168.4.1</code> al navegador.</li>
+    <li>Toca <strong>Configure WiFi</strong> i tria el WiFi de l'escola <strong>a la llista d'aquella pàgina</strong>.</li>
+    <li>Escriu-hi la contrasenya del WiFi de l'escola i toca <strong>Save</strong>. La pàgina diu que s'ha desat i el mòbil es desconnecta de CIBEREDU-Sensor: és normal.</li>
+    <li>La pantalla passa a «WiFi OK» i, al cap de 30 segons, mostra les lectures. Un <code>*</code> a la cantonada vol dir que s'envien bé.</li>
+  </ol>
+  <p><strong>Compte:</strong> la contrasenya de l'escola s'escriu en aquella pàgina, no a la configuració del WiFi del mòbil.
+     Si després de desar la pantalla torna a posar «Mobil: WiFi CIBEREDU-Sensor», la contrasenya no era bona (mireu majúscules i espais) o el WiFi és de 5 GHz: torneu a començar pel pas 2.</p>
+  <p><strong>Requisits de la xarxa:</strong> WiFi de 2,4 GHz (no 5 GHz) que demani només contrasenya. Les xarxes amb usuari i contrasenya,
+     com eduroam, no hi funcionen: cal una xarxa de convidats o de dispositius. No cal obrir cap port, perquè el sensor només envia cap enfora.</p>
+  <p><strong>Si no hi ha cap WiFi que serveixi</strong> (no en sabeu la contrasenya, només és de 5 GHz o demana usuari): feu servir un mòbil com a
+     punt d'accés (compartir internet) i, al pas 4, trieu-lo a la llista. En un iPhone, activeu «Maximitzar la compatibilitat» a Compartir internet;
+     en un Android, trieu la banda de 2,4 GHz a la configuració del punt d'accés. El sensor només envia mentre el mòbil té el punt d'accés encès i a prop:
+     serveix per provar-lo o per a uns dies, no per deixar-lo fix.</p>
+  <p>Si el WiFi cau, el sensor torna a provar-ho sol cada 2 minuts. Si el portal caduca sense configurar-lo, cal desendollar-lo i tornar-lo a endollar.</p>
+
+  <h2>On es veuen les dades</h2>
+  <p>A <a href="https://ciberedu2020-cloud.github.io">ciberedu2020-cloud.github.io</a>, sense contrasenya, des de qualsevol ordinador o mòbil:</p>
+  <ul>
+    <li><strong>Una targeta per sensor</strong> amb el PM2.5 del color del semàfor, el PM10, el PM1 i fa quant va arribar l'última lectura.
+        Si un sensor fa més de 30 minuts que no envia, la targeta es posa en gris.</li>
+    <li><strong>Una gràfica del PM2.5</strong> de les últimes 24 hores o 7 dies, amb les franges del semàfor de fons i un selector per triar l'escola.</li>
+  </ul>
+  <p>La pàgina s'actualitza <strong>cada 10 minuts</strong>: és el ritme al qual la Raspberry la torna a fabricar i a pujar.
+     Les dades es guarden <strong>2 anys</strong>.</p>
+
+  <h2>Seguretat i privacitat</h2>
+  <ul>
+    <li><strong>Només es mesuren partícules.</strong> El sensor no té càmera ni micròfon i no recull cap dada personal: només PM1, PM2.5 i PM10, amb l'hora.</li>
+    <li><strong>Connexions xifrades i cap port obert.</strong> Els sensors envien amb MQTT xifrat (TLS) i una clau del projecte; sense la clau,
+        el broker no accepta dades. Ni les escoles ni l'ordinador del projecte obren cap port a internet.</li>
+    <li><strong>La pàgina pública és una còpia.</strong> L'ordinador que guarda les dades no és accessible des de fora: fabrica la pàgina i la puja a GitHub Pages.
+        Qui la mira no pot arribar a l'ordinador.</li>
+  </ul>
+  <p>Contacte: <a href="mailto:ciberedu2020@gmail.com">ciberedu2020@gmail.com</a></p>
+</article></main>
+
+<footer class="peu"><div class="peu-dins">
+  <p>Educant per un aire més net a les nostres escoles mitjançant la monitorització científica activa.</p>
+  <p><a href="mailto:ciberedu2020@gmail.com">ciberedu2020@gmail.com</a> · <a href="https://www.instagram.com/ciberedu2020/">Instagram</a> ·
+     <a href="https://ciberedu2020.wixsite.com/website">Projectes anteriors</a></p>
+</div></footer>
+</body>
+</html>

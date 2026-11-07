@@ -1,0 +1,61 @@
+/* CIBEREDU · estil comú de totes les pàgines (colors, capçalera, peu, textos) */
+:root {
+  --fons: #f6f7f9; --targeta: #ffffff; --text: #1d2330; --suau: #5b6475; --linia: #e3e6ec;
+  --verd: #2e9d5b; --verd-fons: #e4f5ea; --groc: #c58a00; --groc-fons: #fff4d6;
+  --vermell: #d1434b; --vermell-fons: #fde6e7; --gris: #8b93a3; --gris-fons: #eef0f3;
+  --accent: #2f6fde; --accent-fons: #e7effc;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fons: #12151b; --targeta: #1b1f27; --text: #e8ebf1; --suau: #a3abba; --linia: #2c323d;
+    --verd: #4cc47e; --verd-fons: #173323; --groc: #f2bd3a; --groc-fons: #3a2f12;
+    --vermell: #f2737a; --vermell-fons: #3d1d20; --gris: #8b93a3; --gris-fons: #262b34;
+    --accent: #6f9cf0; --accent-fons: #1c2a44;
+  }
+}
+:root[data-theme="dark"] {
+  --fons: #12151b; --targeta: #1b1f27; --text: #e8ebf1; --suau: #a3abba; --linia: #2c323d;
+  --verd: #4cc47e; --verd-fons: #173323; --groc: #f2bd3a; --groc-fons: #3a2f12;
+  --vermell: #f2737a; --vermell-fons: #3d1d20; --gris: #8b93a3; --gris-fons: #262b34;
+  --accent: #6f9cf0; --accent-fons: #1c2a44;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fons); color: var(--text);
+       font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+
+/* Capçalera amb el menú */
+.cap { background: var(--targeta); border-bottom: 1px solid var(--linia); }
+.cap-dins { max-width: 1100px; margin: 0 auto; padding: 12px 16px; display: flex; flex-wrap: wrap;
+            align-items: center; gap: 8px 24px; }
+.marca { font-weight: 700; color: var(--text); text-decoration: none; margin-right: auto; }
+.marca span { color: var(--verd); }
+.cap nav { display: flex; flex-wrap: wrap; gap: 4px; }
+.cap nav a { color: var(--suau); text-decoration: none; padding: 6px 10px; border-radius: 8px; font-weight: 500; }
+.cap nav a:hover { background: var(--fons); color: var(--text); }
+.cap nav a[aria-current="page"] { background: var(--accent-fons); color: var(--accent); }
+
+/* Pàgines de text */
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+.text { max-width: 760px; }
+.etiqueta { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; font-weight: 700; color: var(--verd); margin: 0 0 4px; }
+h1 { font-size: clamp(1.6rem, 4.5vw, 2.3rem); line-height: 1.2; margin: 0 0 12px; }
+h2 { font-size: 1.35rem; margin: 36px 0 12px; }
+h3 { font-size: 1.05rem; margin: 0 0 6px; }
+.entradeta { font-size: 1.12rem; color: var(--suau); }
+.botons { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 8px; }
+.boto-gran { display: inline-block; padding: 10px 18px; border-radius: 10px; font-weight: 600; text-decoration: none;
+             border: 1px solid var(--accent); color: var(--accent); background: var(--targeta); }
+.boto-gran.principal { background: var(--accent); color: #fff; }
+.passos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; padding: 0; list-style: none; margin: 0; }
+.passos li { background: var(--targeta); border: 1px solid var(--linia); border-radius: 14px; padding: 16px; }
+.num { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+       background: var(--accent-fons); color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+.passos p { margin: 0; color: var(--suau); }
+.nota { background: var(--verd-fons); border-radius: 12px; padding: 12px 16px; margin-top: 20px; }
+
+/* Peu */
+.peu { border-top: 1px solid var(--linia); margin-top: 24px; }
+.peu-dins { max-width: 1100px; margin: 0 auto; padding: 20px 16px 32px; color: var(--suau); font-size: .9rem;
+            display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.peu-dins p { margin: 0; }
