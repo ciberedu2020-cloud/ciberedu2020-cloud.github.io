@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Com funciona · CiberEdu</title>
+<meta name="description" content="El recorregut d'una dada: del sensor de l'aula fins a la pàgina pública, en quatre passos.">
+<link rel="stylesheet" href="/estil.css">
+</head>
+<body>
+<header class="cap"><div class="cap-dins">
+  <a class="marca" href="/">CiberEdu · <span>De la dada al núvol</span></a>
+  <nav aria-label="Menú">
+    <a href="/">Dades</a>
+    <a href="/projecte/">El projecte</a>
+    <a href="/flux/" aria-current="page">Com funciona</a>
+    <a href="/recursos/">Recursos</a>
+  </nav>
+</div></header>
+
+<main>
+  <div class="text">
+    <p class="etiqueta">Flux de la dada</p>
+    <h1>De l'aula al núvol en quatre passos</h1>
+    <p class="entradeta">Cada lectura del sensor fa un viatge fins que la pots veure a la pàgina de dades. Totes les connexions surten cap enfora:
+       ni l'escola ni l'ordinador del projecte obren cap porta a internet.</p>
+  </div>
+
+  <ol class="passos" style="margin-top:24px">
+    <li><span class="num">1</span><h3>Captura a l'aula (el sensor)</h3>
+      <p>Cada dispositiu té un microcontrolador ESP8266 i un mesurador làser ZH03B que detecta partícules en suspensió (PM1, PM2.5 i PM10).
+         Una pantalla mostra els valors i un semàfor canvia de color segons el PM2.5: verd fins a 15, groc fins a 35 i vermell per sobre de 35 µg/m³.</p></li>
+    <li><span class="num">2</span><h3>Sortida al núvol (el broker)</h3>
+      <p>El sensor es connecta al WiFi de l'escola amb un portal senzill i, cada 30 segons, envia les lectures xifrades (MQTT amb TLS)
+         a un intermediari al núvol, flespi. Així funciona des de qualsevol xarxa sense tocar la configuració de l'escola.</p></li>
+    <li><span class="num">3</span><h3>Emmagatzematge (Raspberry Pi)</h3>
+      <p>Un petit ordinador, una Raspberry Pi 5, recull les lectures del núvol (Telegraf) i les guarda a InfluxDB,
+         una base de dades feta per a sèries temporals que conserva l'històric durant dos anys.</p></li>
+    <li><span class="num">4</span><h3>Visualització (pàgina pública)</h3>
+      <p>Cada 10 minuts, la Raspberry genera la <a href="/">pàgina de dades</a> i la publica. Tothom la pot consultar sense contrasenya:
+         l'última lectura de cada escola i l'evolució de les últimes 24 hores o 7 dies.</p></li>
+  </ol>
+
+  <p class="nota text">Per a la part tècnica completa (connexions de la placa, com connectar un sensor al WiFi, seguretat), mira el
+     <a href="/recursos/">resum tècnic</a> a la pàgina de recursos.</p>
+</main>
+
+<footer class="peu"><div class="peu-dins">
+  <p>Educant per un aire més net a les nostres escoles mitjançant la monitorització científica activa.</p>
+  <p><a href="mailto:ciberedu2020@gmail.com">ciberedu2020@gmail.com</a> · <a href="https://www.instagram.com/ciberedu2020/">Instagram</a> ·
+     <a href="https://ciberedu2020.wixsite.com/website">Projectes anteriors</a></p>
+</div></footer>
+</body>
+</html>

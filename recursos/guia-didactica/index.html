@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia didàctica · CiberEdu</title>
+<meta name="description" content="Unitat didàctica «De la dada al núvol»: com la mesura d'un sensor de qualitat de l'aire passa a formar part d'una xarxa. ESO, ampliable a batxillerat.">
+<link rel="stylesheet" href="/estil.css">
+<link rel="stylesheet" href="/recursos/document.css">
+</head>
+<body>
+<header class="cap"><div class="cap-dins">
+  <a class="marca" href="/">CiberEdu · <span>De la dada al núvol</span></a>
+  <nav aria-label="Menú">
+    <a href="/">Dades</a>
+    <a href="/projecte/">El projecte</a>
+    <a href="/flux/">Com funciona</a>
+    <a href="/recursos/" aria-current="page">Recursos</a>
+  </nav>
+</div></header>
+
+<main><article class="doc">
+  <p class="etiqueta">Guia didàctica</p>
+  <h1>De la dada al núvol</h1>
+  <p class="data">CiberEdu · actualitzada l'1 de novembre de 2026</p>
+  <p class="descarrega"><a class="boto-gran" href="/recursos/guia-didactica.pdf">Descarregar en PDF</a></p>
+
+  <p class="entradeta">Unitat sobre la dimensió connectada dels sensors de qualitat de l'aire: com la mesura d'un sensor deixa de ser un número a la pantalla
+     i passa a formar part d'una xarxa que es pot veure, comparar i estudiar. Nivell ESO, ampliable a batxillerat.
+     Al llarg de la guia: <span class="nivell">bàsic</span> (ESO) i <span class="nivell">avançat</span> (batxillerat o ampliació).</p>
+
+  <h2>Per al professorat</h2>
+  <p>Aquesta unitat treballa la <strong>dimensió connectada</strong> del projecte de sensors de qualitat de l'aire: què passa quan la mesura d'un sensor
+     surt de la pantalla i viatja fins a un tauler que tothom pot consultar i comparar.</p>
+  <p><strong>Nivell.</strong> Pensada per a l'<strong>ESO</strong> (nivell bàsic); les parts marcades com a avançat amplien el contingut per a
+     <strong>batxillerat</strong> o alumnat avançat.</p>
+  <p><strong>Durada orientativa.</strong> 2–3 sessions: una per entendre el recorregut de la dada, una per treballar amb el tauler i una per interpretar i comparar.</p>
+  <p><strong>Requisits.</strong> El sistema ja ha d'estar funcionant: sensors enviant dades, que tothom pot veure a la pàgina pública
+     <a href="https://ciberedu2020-cloud.github.io">ciberedu2020-cloud.github.io</a> (s'actualitza cada 10 minuts). L'alumnat no munta res:
+     treballa amb dades reals que ja arriben. Cal un dispositiu amb navegador (ordinador, tauleta o mòbil).</p>
+  <p><strong>Connexió curricular.</strong> Tecnologia i Digitalització (internet de les coses, dades, xarxes), Biologia i Geologia
+     (contaminació de l'aire i salut) i competència digital (interpretar i comunicar dades).</p>
+
+  <h2>Part 1 — Per què connectar els sensors?</h2>
+  <p>Un sensor sol et diu <strong>el teu aire, aquí i ara</strong>. És útil, però no et deixa anar gaire més enllà.
+     Quan els sensors estan <strong>connectats</strong> i envien les dades a un lloc comú, apareixen coses que un sol sensor no pot fer:</p>
+  <ul>
+    <li><strong>Comparar:</strong> l'aire de la teva aula amb el del pati, o el de la teva escola amb el d'una altra d'un altre barri.</li>
+    <li><strong>Veure com canvia amb el temps:</strong> hi ha més partícules al matí o a la tarda? Els dies de molt trànsit?</li>
+    <li><strong>Actuar amb proves:</strong> ventilar, avisar o proposar canvis a partir de dades, no d'intuïcions.</li>
+  </ul>
+  <p><span class="nivell">Bàsic — Activitat inicial (debat, 10 min).</span> Abans de mirar cap dada: creieu que l'aire de la vostra aula és millor o pitjor
+     que el del carrer? I al matí comparat amb la tarda? Apunteu les prediccions del grup; al final de la unitat les comprovareu amb les dades reals.</p>
+  <p><span class="nivell">Avançat — Ampliació.</span> Penseu dues decisions concretes que una escola podria prendre si tingués aquestes dades en viu,
+     i qui les hauria de prendre.</p>
+
+  <h2>Part 2 — Com viatja una dada</h2>
+  <p>Quan el sensor mesura l'aire, aquell número fa un <strong>viatge</strong> fins que el pots veure en un tauler. Hi intervenen quatre peces,
+     i cadascuna té una feina senzilla:</p>
+  <ol>
+    <li><strong>El sensor</strong> — mesura les partícules de l'aire i envia el número per internet.</li>
+    <li><strong>El broker</strong> (imagina't un carter) — rep els missatges de tots els sensors i els reparteix a qui els demana.</li>
+    <li><strong>La base de dades</strong> (el magatzem) — ho va guardant tot, amb la data i l'hora, perquè no es perdi res.</li>
+    <li><strong>El tauler</strong> (el plafó) — llegeix del magatzem i ho dibuixa en gràfiques fàcils de llegir.</li>
+  </ol>
+  <p>Al projecte CiberEdu aquestes quatre peces existeixen de debò: el <strong>sensor</strong> (la teva placa), un <strong>broker</strong> al núvol anomenat
+     <em>flespi</em>, una base de dades anomenada <em>InfluxDB</em> (en un petit ordinador, una Raspberry Pi) i un <strong>tauler</strong>:
+     la pàgina web pública <a href="https://ciberedu2020-cloud.github.io">ciberedu2020-cloud.github.io</a>.</p>
+  <figure class="esquema">
+    <svg viewBox="0 0 760 150" role="img" aria-label="El recorregut d'una dada: del sensor al tauler" font-family="system-ui, sans-serif" font-size="13">
+      <defs><marker id="fletxa-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8b93a3"/></marker></defs>
+      <g fill="none" stroke="#8b93a3" stroke-width="1.25">
+        <path d="M180 56H204" marker-end="url(#fletxa-g)"/><path d="M360 56H384" marker-end="url(#fletxa-g)"/><path d="M540 56H564" marker-end="url(#fletxa-g)"/>
+        <rect x="24" y="20" width="156" height="72" rx="8"/><rect x="204" y="20" width="156" height="72" rx="8"/><rect x="384" y="20" width="156" height="72" rx="8"/><rect x="564" y="20" width="156" height="72" rx="8"/>
+      </g>
+      <g text-anchor="middle" fill="var(--text)" font-weight="600">
+        <text x="102" y="48">1. El sensor</text><text x="282" y="48">2. El broker</text><text x="462" y="48">3. La base de dades</text><text x="642" y="48">4. El tauler</text>
+      </g>
+      <g text-anchor="middle" fill="var(--suau)" font-size="11.5">
+        <text x="102" y="68">mesura i envia</text><text x="282" y="68">el carter: flespi</text><text x="462" y="68">el magatzem: InfluxDB</text><text x="642" y="68">el plafó: la pàgina web</text>
+      </g>
+      <text x="24" y="130" font-size="11.5" fill="var(--suau)">Cada peça fa una feina senzilla; juntes porten la mesura del sensor fins al tauler.</text>
+    </svg>
+  </figure>
+
+  <h2>Part 3 — Veure-ho en viu</h2>
+  <p>Ara toca obrir el tauler i mirar <strong>dades reals</strong>.</p>
+  <p><span class="nivell">Bàsic — Explora el tauler (15 min).</span></p>
+  <ol>
+    <li>Obre la pàgina <a href="https://ciberedu2020-cloud.github.io">ciberedu2020-cloud.github.io</a> (també hi arribes des del web del projecte).</li>
+    <li>Localitza la targeta del <strong>teu sensor</strong>: porta el nom de l'escola.</li>
+    <li>Mira el valor de <strong>PM2.5</strong> d'ara mateix. De quin color és: verd, groc o vermell?</li>
+    <li>A la gràfica de sota, tria la teva escola al selector <strong>Escola</strong>. En les últimes 24 hores, el PM2.5 puja, baixa o està estable?</li>
+    <li>Anota tres valors: el teu PM2.5 d'ara, el més alt i el més baix d'avui (passa el ratolí o el dit per la gràfica per veure cada valor).</li>
+  </ol>
+  <p><span class="nivell">Avançat — Compara (15 min).</span></p>
+  <ol>
+    <li>Tria <strong>Totes</strong> al selector per veure el teu sensor al costat dels altres, o compara la teva targeta amb la d'una altra escola.</li>
+    <li>On hi ha més partícules ara? I fa una hora?</li>
+    <li>Canvia la gràfica a <strong>7 dies</strong>: hi ha hores o dies que es repeteixen?</li>
+    <li>Proposa una explicació possible de les diferències.</li>
+  </ol>
+
+  <h2>Part 4 — Llegir i comparar les dades</h2>
+  <p><strong>Què mesura el sensor.</strong> Les partícules en suspensió, segons la seva mida: <strong>PM1</strong>, <strong>PM2.5</strong> i <strong>PM10</strong>
+     (com més petit el número, més petita i perillosa la partícula, perquè entra més endins dels pulmons). Es mesuren en micrograms per metre cúbic (µg/m³).</p>
+  <p><strong>El semàfor.</strong> Per llegir-ho d'un cop d'ull, el PM2.5 es pinta amb colors:</p>
+  <table>
+    <tr><th>Color</th><th>PM2.5 (µg/m³)</th><th>Què vol dir</th></tr>
+    <tr><td>Verd</td><td>0–15</td><td>Aire bo</td></tr>
+    <tr><td>Groc</td><td>16–35</td><td>Moderat</td></tr>
+    <tr><td>Vermell</td><td>més de 35</td><td>Dolent</td></tr>
+  </table>
+  <p><strong>Comparar amb sentit.</strong> Preguntes per treballar amb el tauler:</p>
+  <ul>
+    <li>Hi ha diferència entre el matí i la tarda? A què pot ser deguda?</li>
+    <li>L'aire de dins l'aula i el de fora, com es comparen?</li>
+    <li>Quan ventileu l'aula, es nota a la gràfica?</li>
+  </ul>
+  <p><span class="nivell">Avançat — Hipòtesi i comprovació.</span> Formuleu una hipòtesi (per exemple: «al pati hi haurà més PM2.5 a l'hora d'entrada pel trànsit»),
+     decidiu quines dades la posarien a prova i comproveu-la amb el tauler. Coincideix amb la vostra predicció de la Part 1?</p>
+
+  <h2>Part 5 (avançat) — Com funciona per dins</h2>
+  <p>Per a batxillerat o alumnat amb curiositat tècnica, val la pena obrir la caixa negra de la Part 2.</p>
+  <ul>
+    <li><strong>MQTT, el protocol.</strong> Els sensors no «criden» les dades de qualsevol manera: parlen un idioma pensat per a aparells petits,
+        l'<strong>MQTT</strong>. És lleuger i funciona encara que la connexió sigui fluixa.</li>
+    <li><strong>El topic.</strong> Cada missatge porta una etiqueta, el <strong>topic</strong> (per exemple <code>ciberedu/b2170b</code>, on <code>b2170b</code>
+        és el codi de la placa), que diu de qui és la dada. El broker fa servir el topic per repartir: qui vulgui «tot el que comenci per <code>ciberedu/</code>» ho rep.</li>
+    <li><strong>El token, la clau.</strong> Perquè no hi publiqui qualsevol, les plaques del projecte porten una clau, el <strong>token</strong> (una contrasenya llarga).
+        Sense token vàlid, el broker no accepta la dada. La clau diu que la dada és del projecte; el topic diu de quina placa és.</li>
+    <li><strong>Base de dades de sèries temporals.</strong> L'InfluxDB està feta per guardar <strong>valors al llarg del temps</strong>
+        (cada sensor envia una mesura cada 30 segons). Per això les gràfiques d'evolució són tan ràpides.</li>
+    <li><strong>La pàgina pública.</strong> L'ordinador que guarda les dades no s'obre a internet: cada 10 minuts fabrica la pàgina web amb les dades noves
+        i la puja a un servei de webs (GitHub Pages). Així tothom la pot veure sense que ningú pugui entrar a l'ordinador.</li>
+  </ul>
+  <p><span class="nivell">Avançat — Per pensar.</span> Per què és millor que els sensors <strong>enviïn</strong> les dades cap enfora, en comptes que algú
+     les hagi d'anar a buscar una per una? Pista: pensa què passa amb 50 sensors en 50 escoles diferents.</p>
+
+  <h2 class="salt">Fitxes d'activitats de l'alumne</h2>
+  <h3>Fitxa 1 (bàsic) — La meva mesura</h3>
+  <p>Nom: <span class="blanc"></span> Data i hora: <span class="blanc"></span> Escola / sensor: <span class="blanc"></span></p>
+  <table>
+    <tr><th>Mesura</th><th>Valor (µg/m³)</th><th>Color del semàfor</th></tr>
+    <tr><td>PM1</td><td></td><td></td></tr>
+    <tr><td>PM2.5</td><td></td><td></td></tr>
+    <tr><td>PM10</td><td></td><td></td></tr>
+  </table>
+  <ol>
+    <li>El color del PM2.5 és: <span class="blanc"></span></li>
+    <li>A les últimes hores, la gràfica puja, baixa o està estable? <span class="blanc"></span></li>
+    <li>Una cosa que podria explicar aquest valor: <span class="blanc"></span></li>
+  </ol>
+  <h3>Fitxa 2 (avançat) — Comparació entre dos llocs</h3>
+  <table>
+    <tr><th></th><th>El meu sensor</th><th>Sensor comparat</th></tr>
+    <tr><td>Lloc</td><td></td><td></td></tr>
+    <tr><td>PM2.5 ara</td><td></td><td></td></tr>
+    <tr><td>PM2.5 fa 1 hora</td><td></td><td></td></tr>
+    <tr><td>Més alt avui</td><td></td><td></td></tr>
+  </table>
+  <ol>
+    <li>On hi ha més partícules ara? Per què creus que és? <span class="blanc"></span></li>
+    <li>Hipòtesi que vols comprovar: <span class="blanc"></span></li>
+    <li>Conclusió amb les dades: <span class="blanc"></span></li>
+  </ol>
+  <p><strong>Repte final (en grup).</strong> Prepareu 3 frases amb dades reals del tauler per explicar a la resta de l'escola com és el vostre aire i què proposeu.</p>
+
+  <h2>Glossari</h2>
+  <table>
+    <tr><th>Terme</th><th>Què vol dir (en paraules senzilles)</th></tr>
+    <tr><td>Sensor</td><td>Aparell que mesura alguna cosa del món real; aquí, les partícules de l'aire.</td></tr>
+    <tr><td>PM2.5</td><td>Partícules en suspensió de menys de 2,5 micres; com més petites, més endins arriben.</td></tr>
+    <tr><td>IoT (internet de les coses)</td><td>Aparells quotidians connectats a internet que envien o reben dades.</td></tr>
+    <tr><td>MQTT</td><td>L'idioma lleuger que fan servir els sensors per enviar missatges.</td></tr>
+    <tr><td>Broker</td><td>El «carter» que rep els missatges dels sensors i els reparteix.</td></tr>
+    <tr><td>Base de dades</td><td>El «magatzem» que guarda totes les dades amb la seva data i hora.</td></tr>
+    <tr><td>Tauler (dashboard)</td><td>La pantalla amb gràfiques que mostra les dades de manera fàcil de llegir.</td></tr>
+    <tr><td>Núvol</td><td>Ordinadors d'internet que fan una feina per tu sense que els tinguis a casa.</td></tr>
+    <tr><td>Token</td><td>Una clau (contrasenya llarga) que permet a les plaques del projecte enviar dades al broker.</td></tr>
+  </table>
+
+  <h2>Avaluació i ampliacions</h2>
+  <p><strong>Indicadors d'assoliment (rúbrica breu).</strong></p>
+  <table>
+    <tr><th>Indicador</th><th>En procés</th><th>Assolit</th><th>Excel·lent</th></tr>
+    <tr><td>Explica el recorregut de la dada</td><td>Nomena alguna peça</td><td>Ordena les 4 peces</td><td>Ho explica amb les analogies i exemples</td></tr>
+    <tr><td>Llegeix el tauler</td><td>Troba el seu sensor</td><td>Interpreta color i tendència</td><td>Compara i treu conclusions</td></tr>
+    <tr><td>Treballa amb dades</td><td>Copia valors</td><td>Compara dos llocs</td><td>Formula i comprova una hipòtesi</td></tr>
+  </table>
+  <p><strong>Ampliacions.</strong></p>
+  <ul>
+    <li>Comparar les dades del tauler amb les d'una estació oficial de qualitat de l'aire de la zona.</li>
+    <li>Relacionar els pics de partícules amb fets reals (trànsit, obres, calefaccions, meteorologia).</li>
+    <li>Afegir un sensor nou a la xarxa i veure com apareix sol al tauler.</li>
+    <li>Avançat: proposar una millora al sistema, com un avís automàtic quan el PM2.5 passa a vermell.</li>
+  </ul>
+</article></main>
+
+<footer class="peu"><div class="peu-dins">
+  <p>Educant per un aire més net a les nostres escoles mitjançant la monitorització científica activa.</p>
+  <p><a href="mailto:ciberedu2020@gmail.com">ciberedu2020@gmail.com</a> · <a href="https://www.instagram.com/ciberedu2020/">Instagram</a> ·
+     <a href="https://ciberedu2020.wixsite.com/website">Projectes anteriors</a></p>
+</div></footer>
+</body>
+</html>
