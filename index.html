@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aire a les escoles · CiberEdu</title>
+<meta name="description" content="Qualitat de l'aire (partícules PM2.5, PM10 i PM1) mesurada pels sensors CiberEdu a les escoles. Projecte «De la dada al núvol».">
+<link rel="stylesheet" href="/estil.css">
+<style>
+  :root {
+    --fons: #f6f7f9; --targeta: #ffffff; --text: #1d2330; --suau: #5b6475; --linia: #e3e6ec;
+    --verd: #2e9d5b; --verd-fons: #e4f5ea; --groc: #c58a00; --groc-fons: #fff4d6;
+    --vermell: #d1434b; --vermell-fons: #fde6e7; --gris: #8b93a3; --gris-fons: #eef0f3;
+    --accent: #2f6fde;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fons: #12151b; --targeta: #1b1f27; --text: #e8ebf1; --suau: #a3abba; --linia: #2c323d;
+      --verd: #4cc47e; --verd-fons: #173323; --groc: #f2bd3a; --groc-fons: #3a2f12;
+      --vermell: #f2737a; --vermell-fons: #3d1d20; --gris: #8b93a3; --gris-fons: #262b34;
+      --accent: #6f9cf0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fons: #12151b; --targeta: #1b1f27; --text: #e8ebf1; --suau: #a3abba; --linia: #2c323d;
+    --verd: #4cc47e; --verd-fons: #173323; --groc: #f2bd3a; --groc-fons: #3a2f12;
+    --vermell: #f2737a; --vermell-fons: #3d1d20; --gris: #8b93a3; --gris-fons: #262b34;
+    --accent: #6f9cf0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fons); color: var(--text);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  header h1 { font-size: clamp(1.5rem, 4vw, 2.1rem); margin: 0 0 4px; line-height: 1.2; }
+  header p { margin: 0; color: var(--suau); }
+  .llegenda { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 16px 0 8px; font-size: .95rem; }
+  .llegenda span { display: inline-flex; align-items: center; gap: 6px; }
+  .punt { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .estat { color: var(--suau); font-size: .9rem; margin-bottom: 16px; }
+  /* Les targetes es reparteixen en files completes (cap forat): el JavaScript tria quantes files cal */
+  .graella { display: flex; flex-direction: column; gap: 12px; }
+  .fila { display: flex; gap: 12px; }
+  .fila .targeta { flex: 1 1 0; min-width: 0; }
+  .targeta { background: var(--targeta); border: 1px solid var(--linia); border-radius: 14px;
+             padding: 14px 16px; border-left: 8px solid var(--c); }
+  .targeta h2 { font-size: 1rem; margin: 0 0 6px; overflow-wrap: anywhere; }
+  .valor { font-size: 2.4rem; font-weight: 700; line-height: 1; color: var(--c); }
+  .valor small { font-size: .9rem; font-weight: 500; color: var(--suau); margin-left: 4px; }
+  .paraula { display: inline-block; margin-top: 8px; padding: 2px 10px; border-radius: 99px;
+             background: var(--cf); color: var(--c); font-weight: 600; font-size: .85rem; }
+  .detall { margin-top: 8px; color: var(--suau); font-size: .9rem; }
+  section.grafic { background: var(--targeta); border: 1px solid var(--linia); border-radius: 14px;
+                   padding: 16px; margin-top: 24px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 12px; }
+  .controls h2 { font-size: 1.1rem; margin: 0; flex: 1 1 260px; }
+  select, .boto { font: inherit; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--linia);
+                  background: var(--fons); color: var(--text); }
+  .boto[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .lienzo { position: relative; height: 340px; }
+  footer { margin-top: 28px; color: var(--suau); font-size: .9rem; }
+  footer a { color: var(--accent); }
+  .buit { color: var(--suau); padding: 24px 0; }
+</style>
+</head>
+<body>
+<header class="cap"><div class="cap-dins">
+  <a class="marca" href="/">CiberEdu · <span>De la dada al núvol</span></a>
+  <nav aria-label="Menú">
+    <a href="/" aria-current="page">Dades</a>
+    <a href="/projecte/">El projecte</a>
+    <a href="/flux/">Com funciona</a>
+    <a href="/recursos/">Recursos</a>
+  </nav>
+</div></header>
+<main>
+  <header>
+    <h1>Qualitat de l'aire a les escoles</h1>
+    <p>Partícules a l'aire mesurades pels sensors CiberEdu · projecte «De la dada al núvol»</p>
+  </header>
+
+  <div class="llegenda" aria-label="Llegenda del semàfor (PM2.5)">
+    <span><i class="punt" style="background:var(--verd)"></i>Bo · fins a 15</span>
+    <span><i class="punt" style="background:var(--groc)"></i>Moderat · de 16 a 35</span>
+    <span><i class="punt" style="background:var(--vermell)"></i>Dolent · més de 35</span>
+    <span><i class="punt" style="background:var(--gris)"></i>Sense dades recents</span>
+  </div>
+  <div class="estat" id="estat">Carregant les dades…</div>
+
+  <div class="graella" id="graella"></div>
+
+  <section class="grafic">
+    <div class="controls">
+      <h2>Evolució del PM2.5 (µg/m³)</h2>
+      <label>Escola: <select id="tria"><option value="">Totes</option></select></label>
+      <span role="group" aria-label="Període">
+        <button class="boto" data-periode="24h" aria-pressed="true">24 hores</button>
+        <button class="boto" data-periode="7d" aria-pressed="false">7 dies</button>
+      </span>
+    </div>
+    <div class="lienzo"><canvas id="grafic" aria-label="Gràfica del PM2.5 al llarg del temps"></canvas></div>
+  </section>
+
+  <footer>
+    <p>El número gran és el <strong>PM2.5</strong>: partícules de menys de 2,5 micres, prou petites per entrar fins al fons dels pulmons.
+       És el que mana el color del semàfor. El 15 coincideix amb el valor diari que recomana l'Organització Mundial de la Salut.
+       Els sensors envien una lectura cada 30 segons i aquesta pàgina s'actualitza sola cada pocs minuts.</p>
+    <p><a href="/projecte/">Més informació sobre el projecte</a></p>
+  </footer>
+</main>
+<footer class="peu"><div class="peu-dins">
+  <p>Educant per un aire més net a les nostres escoles mitjançant la monitorització científica activa.</p>
+  <p><a href="mailto:ciberedu2020@gmail.com">ciberedu2020@gmail.com</a> · <a href="https://www.instagram.com/ciberedu2020/">Instagram</a> ·
+     <a href="https://ciberedu2020.wixsite.com/website">Projectes anteriors</a></p>
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const MIN_SENSE_DADES = 30;          // minuts sense lectura per marcar un sensor com a "sense dades"
+const COLORS = ["#2f6fde", "#e8590c", "#7048e8", "#0ca678", "#d6336c", "#1098ad", "#f08c00", "#5c940d", "#ae3ec9", "#495057"];
+let dades = null, periode = "24h", grafic = null;
+
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function nivell(pm25, minuts) {
+  if (minuts == null) return { c: "--gris", f: "--gris-fons", txt: "Encara sense dades" };
+  if (pm25 == null || minuts > MIN_SENSE_DADES) return { c: "--gris", f: "--gris-fons", txt: "Sense dades recents" };
+  if (pm25 <= 15) return { c: "--verd", f: "--verd-fons", txt: "Aire bo" };
+  if (pm25 <= 35) return { c: "--groc", f: "--groc-fons", txt: "Moderat" };
+  return { c: "--vermell", f: "--vermell-fons", txt: "Dolent" };
+}
+
+function fa(minuts, hora) {
+  if (minuts == null) return "encara no ha enviat cap lectura";
+  if (minuts < 1) return "ara mateix";
+  if (minuts < 60) return `fa ${Math.round(minuts)} min`;
+  if (minuts < 48 * 60) return `fa ${Math.round(minuts / 60)} h`;
+  return "última lectura el " + new Date(hora).toLocaleDateString("ca", { day: "numeric", month: "long" });
+}
+
+function targeta(s, ara) {
+  const minuts = s.hora == null ? null : (ara - s.hora) / 60000;
+  const n = nivell(s.pm25, minuts);
+  const t = document.createElement("article");
+  t.className = "targeta";
+  t.style.setProperty("--c", `var(${n.c})`);
+  t.style.setProperty("--cf", `var(${n.f})`);
+  const mesures = s.hora == null ? "" : `PM10 ${s.pm10 ?? "–"} · PM1 ${s.pm1 ?? "–"} · `;
+  t.innerHTML = `<h2></h2>
+    <div class="valor">${s.pm25 ?? "–"}<small>µg/m³ PM2.5</small></div>
+    <span class="paraula">${n.txt}</span>
+    <div class="detall">${mesures}${fa(minuts, s.hora)}</div>`;
+  t.querySelector("h2").textContent = s.nom;
+  return t;
+}
+
+// Les plaques surten sempre totes i en l'ordre que ve de la Raspberry (el del fitxer de noms).
+// Es reparteixen en tantes files com calgui perquè hi càpiguen i totes les files quedin plenes:
+// per exemple, 10 plaques en 2 files de 5 en una pantalla ampla, o una sota l'altra al mòbil.
+const AMPLE_MINIM = 150, ESPAI = 12;
+function pintaTargetes() {
+  const g = document.getElementById("graella");
+  g.innerHTML = "";
+  if (!dades.sensors.length) { g.innerHTML = '<p class="buit">Encara no hi ha cap sensor enviant dades.</p>'; return; }
+  const ara = Date.now(), n = dades.sensors.length;
+  const perFila = Math.max(1, Math.floor((g.clientWidth + ESPAI) / (AMPLE_MINIM + ESPAI)));
+  const files = Math.ceil(n / perFila);
+  let i = 0;
+  for (let f = 0; f < files; f++) {
+    const quantes = Math.floor(n / files) + (f < n % files ? 1 : 0);   // files tan iguals com es pugui
+    const fila = document.createElement("div");
+    fila.className = "fila";
+    for (let k = 0; k < quantes; k++) fila.appendChild(targeta(dades.sensors[i++], ara));
+    g.appendChild(fila);
+  }
+}
+let ampleAbans = 0;
+addEventListener("resize", () => {
+  const ample = document.getElementById("graella").clientWidth;
+  if (dades && ample !== ampleAbans) { ampleAbans = ample; pintaTargetes(); }
+});
+
+// L'ordre de les plaques (el de les targetes) i, al final, qualsevol nom que només tingui gràfica
+function ordreSensors() {
+  const noms = dades.sensors.map(s => s.nom);
+  const resta = [...new Set([...Object.keys(dades.series["24h"]), ...Object.keys(dades.series["7d"])])]
+    .filter(n => !noms.includes(n)).sort((a, b) => a.localeCompare(b, "ca"));
+  return [...noms, ...resta];
+}
+
+function omplirTria() {
+  const sel = document.getElementById("tria"), abans = sel.value;
+  const ambSerie = new Set([...Object.keys(dades.series["24h"]), ...Object.keys(dades.series["7d"])]);
+  const noms = ordreSensors().filter(nom => ambSerie.has(nom));
+  sel.innerHTML = '<option value="">Totes</option>';
+  for (const nom of noms) { const o = document.createElement("option"); o.value = o.textContent = nom; sel.appendChild(o); }
+  if (noms.includes(abans)) sel.value = abans;
+}
+
+// Franges del semàfor al fons de la gràfica
+const franges = {
+  id: "franges",
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: a, scales: { y } } = chart;
+    const trams = [[0, 15, "--verd"], [15, 35, "--groc"], [35, Math.max(y.max, 36), "--vermell"]];
+    ctx.save();
+    ctx.globalAlpha = 0.12;
+    for (const [de, fins, color] of trams) {
+      const top = Math.max(y.getPixelForValue(fins), a.top), baix = Math.min(y.getPixelForValue(de), a.bottom);
+      if (baix > top) { ctx.fillStyle = css(color); ctx.fillRect(a.left, top, a.right - a.left, baix - top); }
+    }
+    ctx.restore();
+  }
+};
+
+function etiquetaTemps(v) {
+  const d = new Date(v);
+  return periode === "24h"
+    ? d.toLocaleTimeString("ca", { hour: "2-digit", minute: "2-digit" })
+    : d.toLocaleDateString("ca", { weekday: "short", day: "numeric" });
+}
+
+// Marques de l'eix del temps a hores rodones: cada 3 h (24 hores) o cada mitjanit (7 dies)
+function marquesTemps(inici, fi) {
+  const d = new Date(inici), marques = [];
+  d.setMinutes(0, 0, 0);
+  if (periode === "24h") { d.setHours(Math.ceil(d.getHours() / 3) * 3); }
+  else { d.setHours(24, 0, 0, 0); }
+  while (d.getTime() <= fi) {
+    if (d.getTime() >= inici) marques.push({ value: d.getTime() });
+    if (periode === "24h") d.setHours(d.getHours() + 3); else d.setDate(d.getDate() + 1);
+  }
+  return marques;
+}
+
+function pintaGrafic() {
+  const tria = document.getElementById("tria").value;
+  const series = dades.series[periode];
+  // cada placa té sempre el mateix color, el de la seva posició a la llista
+  const ordre = ordreSensors();
+  const noms = ordre.filter(n => series[n] && (!tria || n === tria));
+  const color = (nom) => COLORS[ordre.indexOf(nom) % COLORS.length];
+  const datasets = noms.map((nom) => ({
+    label: nom, data: series[nom].map(([x, y]) => ({ x, y })),
+    borderColor: color(nom), backgroundColor: color(nom),
+    borderWidth: 2, pointRadius: 0, tension: 0.25, spanGaps: periode === "24h" ? 30 * 60000 : 3 * 3600000
+  }));
+  const ara = dades.generat, inici = ara - (periode === "24h" ? 24 * 3600000 : 7 * 86400000);
+  const opcions = {
+    responsive: true, maintainAspectRatio: false, animation: false,
+    interaction: { mode: "nearest", axis: "x", intersect: false },
+    scales: {
+      x: { type: "linear", min: inici, max: ara, ticks: { callback: etiquetaTemps, color: css("--suau") },
+           grid: { color: css("--linia") }, afterBuildTicks: (eix) => { eix.ticks = marquesTemps(inici, ara); } },
+      y: { beginAtZero: true, suggestedMax: 40, ticks: { color: css("--suau") }, grid: { color: css("--linia") },
+           title: { display: true, text: "µg/m³", color: css("--suau") } }
+    },
+    plugins: {
+      legend: { display: noms.length > 1, labels: { color: css("--text"), boxWidth: 12 } },
+      tooltip: { callbacks: { title: (it) => new Date(it[0].parsed.x).toLocaleString("ca", { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }),
+                              label: (it) => `${it.dataset.label}: ${Math.round(it.parsed.y)} µg/m³` } }
+    }
+  };
+  if (grafic) grafic.destroy();
+  grafic = new Chart(document.getElementById("grafic"), { type: "line", data: { datasets }, options: opcions, plugins: [franges] });
+}
+
+async function carrega() {
+  try {
+    const r = await fetch("dades.json?t=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    dades = await r.json();
+    const quan = new Date(dades.generat).toLocaleString("ca", { dateStyle: "long", timeStyle: "short" });
+    const actius = dades.sensors.filter(s => s.hora != null && (Date.now() - s.hora) / 60000 <= MIN_SENSE_DADES).length;
+    document.getElementById("estat").textContent =
+      `Dades actualitzades el ${quan} · ${actius} de ${dades.sensors.length} sensors enviant ara.`;
+    ampleAbans = document.getElementById("graella").clientWidth;
+    pintaTargetes(); omplirTria(); pintaGrafic();
+  } catch (e) {
+    document.getElementById("estat").textContent = "No s'han pogut carregar les dades. Torna-ho a provar d'aquí a una estona.";
+  }
+}
+
+document.getElementById("tria").addEventListener("change", pintaGrafic);
+document.querySelectorAll("[data-periode]").forEach(b => b.addEventListener("click", () => {
+  periode = b.dataset.periode;
+  document.querySelectorAll("[data-periode]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  pintaGrafic();
+}));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => dades && pintaGrafic());
+carrega();
+setInterval(carrega, 5 * 60000);
+</script>
+</body>
+</html>
