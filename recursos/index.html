@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recursos · CiberEdu</title>
+<meta name="description" content="Guia didàctica, presentació i resum tècnic del projecte De la dada al núvol.">
+<link rel="stylesheet" href="/estil.css">
+<style>
+  .recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 24px; }
+  .recurs { background: var(--targeta); border: 1px solid var(--linia); border-radius: 14px; padding: 18px;
+            display: flex; flex-direction: column; gap: 8px; }
+  .recurs p { margin: 0; color: var(--suau); flex: 1; }
+  .recurs .per { font-size: .85rem; font-weight: 600; color: var(--verd); }
+  .recurs a.boto-gran { align-self: flex-start; }
+  .recurs.aviat { opacity: .7; }
+</style>
+</head>
+<body>
+<header class="cap"><div class="cap-dins">
+  <a class="marca" href="/">CiberEdu · <span>De la dada al núvol</span></a>
+  <nav aria-label="Menú">
+    <a href="/">Dades</a>
+    <a href="/projecte/">El projecte</a>
+    <a href="/flux/">Com funciona</a>
+    <a href="/recursos/" aria-current="page">Recursos</a>
+  </nav>
+</div></header>
+
+<main>
+  <div class="text">
+    <p class="etiqueta">Recursos didàctics</p>
+    <h1>Materials per treballar a l'aula</h1>
+    <p class="entradeta">Tot el que cal per entendre el projecte, treballar amb les dades i connectar els sensors.</p>
+  </div>
+
+  <div class="recursos">
+    <article class="recurs">
+      <span class="per">Per al professorat</span>
+      <h3>Guia didàctica</h3>
+      <p>Unitat de 2 o 3 sessions per a l'ESO (ampliable a batxillerat): el recorregut de la dada, activitats amb el tauler, fitxes i rúbrica.</p>
+      <div class="botons" style="margin:0"><a class="boto-gran" href="/recursos/guia-didactica/">Llegir en línia</a>
+      <a class="boto-gran" href="/recursos/guia-didactica.pdf">PDF</a></div>
+    </article>
+    <article class="recurs">
+      <span class="per">Per a l'aula</span>
+      <h3>Presentació</h3>
+      <p>Deu diapositives per presentar el projecte a l'alumnat, amb notes per al professorat.</p>
+      <a class="boto-gran" href="/recursos/presentacio.pdf">Descarregar (PDF)</a>
+    </article>
+    <article class="recurs">
+      <span class="per">Per a qui instal·la els sensors</span>
+      <h3>Resum tècnic</h3>
+      <p>Com funciona el sistema, les connexions de la placa i com connectar un sensor al WiFi de l'escola.</p>
+      <div class="botons" style="margin:0"><a class="boto-gran" href="/recursos/resum-tecnic/">Llegir en línia</a>
+      <a class="boto-gran" href="/recursos/resum-tecnic.pdf">PDF</a></div>
+    </article>
+    <article class="recurs aviat">
+      <span class="per">Properament</span>
+      <h3>Manual d'anàlisi</h3>
+      <p>Com interpretar les dades i comparar-les amb altres escoles.</p>
+    </article>
+  </div>
+</main>
+
+<footer class="peu"><div class="peu-dins">
+  <p>Educant per un aire més net a les nostres escoles mitjançant la monitorització científica activa.</p>
+  <p><a href="mailto:ciberedu2020@gmail.com">ciberedu2020@gmail.com</a> · <a href="https://www.instagram.com/ciberedu2020/">Instagram</a> ·
+     <a href="https://ciberedu2020.wixsite.com/website">Projectes anteriors</a></p>
+</div></footer>
+</body>
+</html>
